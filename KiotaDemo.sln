@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenWeather.ApiClient.Demo", "src\OpenWeather.ApiClient.Demo\OpenWeather.ApiClient.Demo.csproj", "{93830279-4712-499A-B2B7-6390630DF8E7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{6B1BD811-8E34-4165-B50D-CAC088E5F30C}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F3994418-E59E-4A89-9E59-7C39A688642E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93830279-4712-499A-B2B7-6390630DF8E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93830279-4712-499A-B2B7-6390630DF8E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93830279-4712-499A-B2B7-6390630DF8E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93830279-4712-499A-B2B7-6390630DF8E7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{93830279-4712-499A-B2B7-6390630DF8E7} = {F3994418-E59E-4A89-9E59-7C39A688642E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D752E4FE-C0BD-4020-A63C-A63A3D72DCB9}
+	EndGlobalSection
+EndGlobal

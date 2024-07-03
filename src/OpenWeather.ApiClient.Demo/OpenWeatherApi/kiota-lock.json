@@ -1,0 +1,33 @@
+{
+  "descriptionHash": "42DFB7D793E09375D17C9E6CF593FE21C0186D31DC1618744BB83F4C4ED2F080CCFF3FA2A137AC8B7A2B97AE70501D7D70A03C3D22B15D51EDC44F9D9ADA3538",
+  "descriptionLocation": "https://idratherbewriting.com/docs/openapi_spec_and_generated_ref_docs/openapi_openweathermap.yml",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.15.0",
+  "clientClassName": "OpenWeatherApiClient",
+  "clientNamespaceName": "OpenWeather.ApiClient.Demo",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}
