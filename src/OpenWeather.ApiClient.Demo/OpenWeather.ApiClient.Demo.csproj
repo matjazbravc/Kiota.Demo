@@ -1,49 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-	
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<NoWarn>1574;1591;1591;1701;1702;CS8604;CS8618;IDE0007;IDE0017;IDE0023;IDE0057;IDE0058;IDE0063;IDE0066;IDE0090;S1450;</NoWarn>
 	</PropertyGroup>
-
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<NoWarn>1574;1591;1591;1701;1702;CS8604;CS8618;IDE0007;IDE0017;IDE0023;IDE0057;IDE0058;IDE0063;IDE0066;IDE0090;S1450;</NoWarn>
 	</PropertyGroup>
-
 	<ItemGroup>
-	  <None Remove="appsettings.json" />
+		<None Remove="appsettings.json" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.10.0" />
+		<PackageReference Include="Microsoft.Extensions.ServiceDiscovery" Version="8.2.1" />
+		<PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.13.0" />
+		<PackageReference Include="Microsoft.Kiota.Serialization.Form" Version="1.13.0" />
+		<PackageReference Include="Microsoft.Kiota.Serialization.Json" Version="1.13.0" />
+		<PackageReference Include="Microsoft.Kiota.Serialization.Multipart" Version="1.13.0" />
+		<PackageReference Include="Microsoft.Kiota.Serialization.Text" Version="1.13.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="OpenWeatherApi\" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Include="appsettings.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>	
-  
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.6.0" />
-		<PackageReference Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.2" />
-    <PackageReference Include="Microsoft.Kiota.Http.HttpClientLibrary" Version="1.4.3" />
-    <PackageReference Include="Microsoft.Kiota.Serialization.Form" Version="1.2.5" />
-    <PackageReference Include="Microsoft.Kiota.Serialization.Json" Version="1.3.3" />
-    <PackageReference Include="Microsoft.Kiota.Serialization.Multipart" Version="1.1.5" />
-    <PackageReference Include="Microsoft.Kiota.Serialization.Text" Version="1.2.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-    <Folder Include="OpenWeatherApi\" />
-  </ItemGroup>
-	
 	<!-- Since kiota ships as dotnet global-tool we can easily rely on it as dependency and
 	     therefore make it as part of build process. Here is how to build API client every time we build the project.
 			 This way we don't need to use Kiota client tool everytime. -->
 	<Target Name="GenerateClient" AfterTargets="Build" Condition="$(Configuration)=='Debug'">
 		<Exec Command="kiota generate -l CSharp --openapi https://idratherbewriting.com/docs/openapi_spec_and_generated_ref_docs/openapi_openweathermap.yml --output OpenWeatherApi --namespace-name $(ProjectName) --class-name OpenWeatherApiClient --exclude-backward-compatible" WorkingDirectory="$(ProjectDir)" />
 	</Target>
-
 </Project>

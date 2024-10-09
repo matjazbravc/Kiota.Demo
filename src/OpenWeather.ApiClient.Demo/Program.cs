@@ -13,6 +13,7 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 
 builder.Services.AddOptions();
 
+// NOTE: Don't forget to obtain Api key and store it to the MySettings configuration: "ApiKey": "<api-key>" in appsettings.json file.
 builder.Services.AddConfiguration<MyAppSettings>(builder.Configuration, "MySettings");
 
 builder.Services.ConfigureHttpClientDefaults(http =>
