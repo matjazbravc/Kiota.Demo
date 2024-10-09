@@ -5,52 +5,51 @@ using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using OpenWeather.ApiClient.Demo.Settings;
 
-namespace OpenWeather.ApiClient.Demo.Extensions
+namespace OpenWeather.ApiClient.Demo.Extensions;
+
+public static class ServiceCollectionExtensions
 {
-  public static class ServiceCollectionExtensions
+  public static void RegisterNewsSearchApiClient(this IServiceCollection services, IConfiguration configuration)
   {
-    public static void RegisterNewsSearchApiClient(this IServiceCollection services, IConfiguration configuration)
+    MyAppSettings mySettings = new MyAppSettings();
+    configuration.GetSection("MySettings").Bind(mySettings);
+
+    string apiKey = mySettings.ApiKey ?? string.Empty;
+    string baseUrl = mySettings.BaseUrl ?? string.Empty;
+
+    services.AddSingleton<IAuthenticationProvider, ApiKeyAuthenticationProvider>(sp =>
     {
-      MyAppSettings mySettings = new MyAppSettings();
-      configuration.GetSection("MySettings").Bind(mySettings);
+      // Add api key as query parameter
+      return new(apiKey, "appid", ApiKeyAuthenticationProvider.KeyLocation.QueryParameter);
+    });
 
-      string apiKey = mySettings.ApiKey ?? string.Empty;
-      string baseUrl = mySettings.BaseUrl ?? string.Empty;
-
-      services.AddSingleton<IAuthenticationProvider, ApiKeyAuthenticationProvider>(sp =>
+    services.AddHttpClient<OpenWeatherApiClient>()
+    .AddTypedClient((httpClient, sp) =>
+    {
+      var authenticationProvider = sp.GetRequiredService<IAuthenticationProvider>();
+      var requestAdapter = new HttpClientRequestAdapter(authenticationProvider, httpClient: httpClient)
       {
-        // Add api key as query parameter
-        return new(apiKey, "appid", ApiKeyAuthenticationProvider.KeyLocation.QueryParameter);
-      });
+        BaseUrl = baseUrl
+      };
+      return new OpenWeatherApiClient(requestAdapter);
+    })
+    .ConfigurePrimaryHttpMessageHandler(_ =>
+    {
+      IList<DelegatingHandler> defaultHandlers = KiotaClientFactory.CreateDefaultHandlers();
 
-      services.AddHttpClient<OpenWeatherApiClient>()
-      .AddTypedClient((httpClient, sp) =>
-      {
-        var authenticationProvider = sp.GetRequiredService<IAuthenticationProvider>();
-        var requestAdapter = new HttpClientRequestAdapter(authenticationProvider, httpClient: httpClient)
-        {
-          BaseUrl = baseUrl
-        };
-        return new OpenWeatherApiClient(requestAdapter);
-      })
-      .ConfigurePrimaryHttpMessageHandler(_ =>
-      {
-        IList<DelegatingHandler> defaultHandlers = KiotaClientFactory.CreateDefaultHandlers();
+      // Get default HttpMessageHandler
+      HttpMessageHandler defaultHttpMessageHandler = KiotaClientFactory.GetDefaultHttpMessageHandler();
 
-        // Get default HttpMessageHandler
-        HttpMessageHandler defaultHttpMessageHandler = KiotaClientFactory.GetDefaultHttpMessageHandler();
+      // Or, if your generated client is long-lived, respond to DNS updates using:
+      // HttpMessageHandler defaultHttpMessageHandler = new SocketsHttpHandler();
 
-        // Or, if your generated client is long-lived, respond to DNS updates using:
-        // HttpMessageHandler defaultHttpMessageHandler = new SocketsHttpHandler();
-
-        return KiotaClientFactory.ChainHandlersCollectionAndGetFirstLink(defaultHttpMessageHandler, [.. defaultHandlers])!;
-      })
-      .AddStandardResilienceHandler().Configure(cfg =>
-      {
-        cfg.Retry.MaxRetryAttempts = 3;
-        cfg.Retry.UseJitter = true;
-        cfg.Retry.BackoffType = Polly.DelayBackoffType.Exponential;
-      });
-    }
+      return KiotaClientFactory.ChainHandlersCollectionAndGetFirstLink(defaultHttpMessageHandler, [.. defaultHandlers])!;
+    })
+    .AddStandardResilienceHandler().Configure(cfg =>
+    {
+      cfg.Retry.MaxRetryAttempts = 3;
+      cfg.Retry.UseJitter = true;
+      cfg.Retry.BackoffType = Polly.DelayBackoffType.Exponential;
+    });
   }
 }

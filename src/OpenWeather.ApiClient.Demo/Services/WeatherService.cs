@@ -3,57 +3,56 @@ using OpenWeather.ApiClient.Demo.Models;
 using OpenWeather.ApiClient.Demo.Settings;
 using OpenWeather.ApiClient.Demo.Weather;
 
-namespace OpenWeather.ApiClient.Demo.Services
+namespace OpenWeather.ApiClient.Demo.Services;
+
+public class WeatherService : IWeatherService
 {
-  public class WeatherService : IWeatherService
+  private readonly OpenWeatherApiClient _httpClient;
+  private readonly MyAppSettings _mySettings;
+
+  public WeatherService(OpenWeatherApiClient httpClient, IOptions<MyAppSettings> mySettings)
   {
-    private readonly OpenWeatherApiClient _httpClient;
-    private readonly MyAppSettings _mySettings;
+    _httpClient = httpClient;
+    _mySettings = mySettings.Value;
+  }
 
-    public WeatherService(OpenWeatherApiClient httpClient, IOptions<MyAppSettings> mySettings)
+  public async Task<Models.Weather?> GetCurrentWeather(string? cityName)
+  {
+    // API request by city name
+    // You can call by city name or city name, state code and country code.
+    // Please note that searching by states available only for the USA locations.
+    // API Docs:
+    // https://openweathermap.org/current
+    // Swagger UI:
+    // https://idratherbewriting.com/assets/files/swagger/#/Current%20Weather%20Data/CurrentWeatherData
+
+    TwoZeroZero? result = await _httpClient.Weather.GetAsync(rc =>
     {
-      _httpClient = httpClient;
-      _mySettings = mySettings.Value;
-    }
+      rc.QueryParameters.Q = cityName;
+      rc.QueryParameters.Units = GetUnitsQueryParameter();
+      rc.QueryParameters.Lang = GetLanguageQueryParameter();
+    });
 
-    public async Task<Models.Weather?> GetCurrentWeather(string? cityName)
+    return result?.Weather?.FirstOrDefault();
+  }
+
+  private GetLangQueryParameterType GetLanguageQueryParameter()
+  {
+    GetLangQueryParameterType result = GetLangQueryParameterType.En;
+    if (Enum.TryParse(_mySettings?.QueryParameters?.Lang, out GetLangQueryParameterType langParam))
     {
-      // API request by city name
-      // You can call by city name or city name, state code and country code.
-      // Please note that searching by states available only for the USA locations.
-      // API Docs:
-      // https://openweathermap.org/current
-      // Swagger UI:
-      // https://idratherbewriting.com/assets/files/swagger/#/Current%20Weather%20Data/CurrentWeatherData
-
-      TwoZeroZero? result = await _httpClient.Weather.GetAsync(rc =>
-      {
-        rc.QueryParameters.Q = cityName;
-        rc.QueryParameters.Units = GetUnitsQueryParameter();
-        rc.QueryParameters.Lang = GetLanguageQueryParameter();
-      });
-
-      return result?.Weather?.FirstOrDefault();
+      result = langParam;
     }
+    return result;
+  }
 
-    private GetLangQueryParameterType GetLanguageQueryParameter()
+  private GetUnitsQueryParameterType GetUnitsQueryParameter()
+  {
+    GetUnitsQueryParameterType result = GetUnitsQueryParameterType.Metric;
+    if (Enum.TryParse(_mySettings?.QueryParameters?.Units, out GetUnitsQueryParameterType unitParam))
     {
-      GetLangQueryParameterType result = GetLangQueryParameterType.En;
-      if (Enum.TryParse(_mySettings?.QueryParameters?.Lang, out GetLangQueryParameterType langParam))
-      {
-        result = langParam;
-      }
-      return result;
+      result = unitParam;
     }
-
-    private GetUnitsQueryParameterType GetUnitsQueryParameter()
-    {
-      GetUnitsQueryParameterType result = GetUnitsQueryParameterType.Metric;
-      if (Enum.TryParse(_mySettings?.QueryParameters?.Units, out GetUnitsQueryParameterType unitParam))
-      {
-        result = unitParam;
-      }
-      return result;
-    }
+    return result;
   }
 }
